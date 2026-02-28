@@ -6,8 +6,8 @@ services:
     plan: free
     branch: main
     rootDir: backend
-    buildCommand: npm install && npx prisma generate && npm run build
-    startCommand: npx prisma migrate resolve --rolled-back 20260228_init || true && npx prisma migrate deploy && npm start
+    buildCommand: npm install && npx prisma generate && npm run build && chmod +x deploy.sh
+    startCommand: ./deploy.sh
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
