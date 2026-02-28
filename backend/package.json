@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node  dist/server.js",
-    "start:prod": "npx prisma migrate resolve --rolled-back 20260228_init || true && npx prisma migrate deploy && node dist/server.js",
+    "start": "node dist/server.js",
+    "start:prod": "node fix-migrations.js && npx prisma migrate deploy && node dist/server.js",
     "migrate": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
@@ -31,6 +31,7 @@
     "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3",
     "prisma": "^5.9.1",
     "typescript": "^5.3.3",
     "zod": "^3.22.4"
