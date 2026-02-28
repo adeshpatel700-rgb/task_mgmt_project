@@ -64,14 +64,13 @@ async function test2_Register() {
       headers: { 'Content-Type': 'application/json' },
       body: {
         email: `testuser${Date.now()}@example.com`,
-        password: 'Test123456',
-        name: 'Test User'
+        password: 'Test123456'
       }
     });
     
     if (response.status === 201 && response.data.success) {
-      accessToken = response.data.data.accessToken;
-      refreshToken = response.data.data.refreshToken;
+      accessToken = response.data.data.tokens.accessToken;
+      refreshToken = response.data.data.tokens.refreshToken;
       console.log('✅ PASS: Registration successful');
       console.log('   User:', response.data.data.user.email);
       console.log('   Token Length:', accessToken.length);
@@ -97,7 +96,7 @@ async function test3_Login() {
     await makeRequest(`${API_BASE}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: { email, password, name: 'Login Test User' }
+      body: { email, password }
     });
 
     // Now login
@@ -310,13 +309,12 @@ async function test11_DeleteTask() {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
     
-    if (response.status === 200 && response.data.success) {
+    if (response.status === 204) {
       console.log('✅ PASS: Task deleted');
-      console.log('   Message:', response.data.message);
       return true;
     } else {
       console.log('❌ FAIL: Delete task failed');
-      console.log('   Response:', JSON.stringify(response.data, null, 2));
+      console.log('   Status:', response.status);
       return false;
     }
   } catch (error) {
@@ -337,13 +335,12 @@ async function test12_Logout() {
       body: { refreshToken }
     });
     
-    if (response.status === 200 && response.data.success) {
+    if (response.status === 204) {
       console.log('✅ PASS: Logout successful');
-      console.log('   Message:', response.data.message);
       return true;
     } else {
       console.log('❌ FAIL: Logout failed');
-      console.log('   Response:', JSON.stringify(response.data, null, 2));
+      console.log('   Status:', response.status);
       return false;
     }
   } catch (error) {

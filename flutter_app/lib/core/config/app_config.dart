@@ -1,12 +1,10 @@
 class AppConfig {
   // API Configuration
   static const String apiBaseUrl =
-      'http://10.0.2.2:3000'; // Android emulator localhost
-  // For physical device, use your machine's IP: 'http://192.168.x.x:3000'
-  // For production: 'https://your-api-domain.com'
+      'https://task-management-backend-8bvu.onrender.com';
 
   // Environment
-  static const Environment environment = Environment.development;
+  static const Environment environment = Environment.production;
 
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 30);
