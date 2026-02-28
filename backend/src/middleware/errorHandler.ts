@@ -16,6 +16,7 @@ export class AppError extends Error {
 }
 
 const handlePrismaError = (error: Prisma.PrismaClientKnownRequestError): AppError => {
+  logger.error('Prisma error details:', { code: error.code, message: error.message, meta: error.meta });
   switch (error.code) {
     case 'P2002':
       return new AppError(409, 'A record with this unique field already exists');
@@ -24,7 +25,7 @@ const handlePrismaError = (error: Prisma.PrismaClientKnownRequestError): AppErro
     case 'P2003':
       return new AppError(400, 'Invalid reference to related record');
     default:
-      return new AppError(500, 'Database operation failed');
+      return new AppError(500, `Database operation failed (${error.code}: ${error.message})`);
   }
 };
 
@@ -44,9 +45,22 @@ export const errorHandler = (
 ): void => {
   let error = err;
 
+  // Log the actual error for debugging
+  logger.error('Error caught:', {
+    name: err.name,
+    message: err.message,
+    stack: err.stack,
+  });
+
   // Convert known errors to AppError
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     error = handlePrismaError(err);
+  } else if (err instanceof Prisma.PrismaClientInitializationError) {
+    logger.error('Prisma initialization error:', err);
+    error = new AppError(500, `Database connection failed: ${err.message}`);
+  } else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+    logger.error('Prisma unknown error:', err);
+    error = new AppError(500, `Database error: ${err.message}`);
   } else if (err instanceof ZodError) {
     error = handleZodError(err);
   } else if (!(err instanceof AppError)) {
