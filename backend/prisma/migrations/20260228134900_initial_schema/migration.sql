@@ -2,19 +2,18 @@
 CREATE TYPE "TaskStatus" AS ENUM ('TODO', 'IN_PROGRESS', 'DONE');
 
 -- CreateTable
-CREATE TABLE "User" (
+CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Task" (
+CREATE TABLE "tasks" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -23,40 +22,49 @@ CREATE TABLE "Task" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "tasks_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "RefreshToken" (
+CREATE TABLE "refresh_tokens" (
     "id" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "expiresAt" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "RefreshToken_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "refresh_tokens_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE INDEX "Task_userId_idx" ON "Task"("userId");
+CREATE INDEX "users_email_idx" ON "users"("email");
 
 -- CreateIndex
-CREATE INDEX "Task_status_idx" ON "Task"("status");
+CREATE INDEX "tasks_userId_idx" ON "tasks"("userId");
 
 -- CreateIndex
-CREATE INDEX "Task_userId_createdAt_idx" ON "Task"("userId", "createdAt" DESC);
+CREATE INDEX "tasks_status_idx" ON "tasks"("status");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "RefreshToken_token_key" ON "RefreshToken"("token");
+CREATE INDEX "tasks_userId_status_idx" ON "tasks"("userId", "status");
 
 -- CreateIndex
-CREATE INDEX "RefreshToken_userId_idx" ON "RefreshToken"("userId");
+CREATE INDEX "tasks_createdAt_idx" ON "tasks"("createdAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "refresh_tokens_token_key" ON "refresh_tokens"("token");
+
+-- CreateIndex
+CREATE INDEX "refresh_tokens_token_idx" ON "refresh_tokens"("token");
+
+-- CreateIndex
+CREATE INDEX "refresh_tokens_userId_idx" ON "refresh_tokens"("userId");
 
 -- AddForeignKey
-ALTER TABLE "Task" ADD CONSTRAINT "Task_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "tasks" ADD CONSTRAINT "tasks_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "RefreshToken" ADD CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "refresh_tokens" ADD CONSTRAINT "refresh_tokens_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
